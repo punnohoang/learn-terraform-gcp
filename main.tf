@@ -8,17 +8,13 @@ terraform {
 }
 
 provider "google" {
-  project = var.project_id
-  region  = "us-central1"
-  zone    = "us-central1-a"
+  project = var.project
+  region  = var.region
+  zone    = var.zone
 }
 
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
-}
-
-variable "project_id" {
-  description = "GCP Project ID"
 }
 
 resource "google_compute_instance" "vm_instance" {
