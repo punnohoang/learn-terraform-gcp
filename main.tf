@@ -10,12 +10,31 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = "us-central1"
-  zone    = "us-central1-c"
+  zone    = "us-central1-a"
 }
 
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
 }
+
 variable "project_id" {
   description = "GCP Project ID"
+}
+
+resource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+
+  boot_disk {
+    initialize_params {
+	image = "cos-cloud/cos-stable"
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.name
+    access_config {
+    }
+  }
 }
