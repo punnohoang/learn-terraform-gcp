@@ -1,0 +1,12 @@
+# Environment variables
+.env
+
+# Terraform state (chứa thông tin nhạy cảm)
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# GCP credentials
+*.json
+application_default_credentials.json
