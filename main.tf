@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     google = {
-      source = "hashicorp/google"
+      source  = "hashicorp/google"
       version = "6.8.0"
     }
   }
@@ -15,4 +15,7 @@ provider "google" {
 
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
+}
+variable "project_id" {
+  description = "GCP Project ID"
 }

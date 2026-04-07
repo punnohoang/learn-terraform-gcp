@@ -1,0 +1,17 @@
+---
+1. Khởi tạo Terraform
+terraform init
+---
+2. Format và validate cấu hình
+terraform fmt
+terraform validate
+---
+3. Terraform Plan và Apply
+terraform plan
+terraform apply
+
+terraform plan -var="project_id=$(grep PROJECT_ID .env | cut -d '=' -f2)"
+terraform apply -var="project_id=$(grep PROJECT_ID .env | cut -d '=' -f2)"
+---
+4. Kiểm tra trạng thái
+terraform show
