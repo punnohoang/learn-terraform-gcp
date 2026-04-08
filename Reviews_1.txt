@@ -1,0 +1,68 @@
+1. Công cụ & môi trường
+gcloud CLI — công cụ dòng lệnh để tương tác với GCP. Bạn đã học cách xác thực bằng gcloud auth login và gcloud auth application-default login — hai lệnh này khác nhau:
+
+auth login → xác thực cho gcloud CLI
+auth application-default login → xác thực cho các ứng dụng như Terraform
+
+Terraform — công cụ Infrastructure as Code (IaC), cho phép bạn mô tả hạ tầng bằng code thay vì click tay trên console.
+
+2. Cấu trúc file Terraform
+Bạn đã làm việc với 5 loại file:
+FileVai tròmain.tfĐịnh nghĩa tài nguyên chínhvariables.tfKhai báo biến đầu vàoterraform.tfvarsGán giá trị cho biếnoutputs.tfĐịnh ngh�ã giá trị đầu ra.gitignoreBảo vệ file nhạy cảm
+
+3. Các lệnh Terraform cơ bản
+bashterraform init      # Khởi tạo, tải provider
+terraform fmt       # Format code tự động
+terraform validate  # Kiểm tra cú pháp
+terraform plan      # Xem trước thay đổi (chưa thật)
+terraform apply     # Áp dụng thay đổi (tạo thật)
+terraform show      # Xem trạng thái hiện tại
+terraform output    # Xem giá trị output
+terraform destroy   # Xóa toàn bộ hạ tầng
+
+4. Tài nguyên đã tạo trên GCP
+VPC Network — mạng ảo riêng:
+hclresource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
+}
+VM Instance — máy ảo Linux:
+hclresource "google_compute_instance" "vm_instance" {
+  name         = "terraform-instance"
+  machine_type = "e2-micro"
+  tags         = ["web", "dev"]
+  boot_disk { ... }
+  network_interface { ... }
+}
+
+5. Biến đầu vào & đầu ra
+Input variable — tránh hardcode giá trị:
+hclvariable "zone" {
+  default = "asia-southeast1-a"
+}
+# Dùng bằng: var.zone
+Output value — lấy thông tin sau khi tạo:
+hcloutput "ip" {
+  value = google_compute_instance.vm_instance.network_interface.0.network_ip
+}
+
+6. Bảo mật — những gì KHÔNG push lên Git
+.env                  # chứa PROJECT_ID
+terraform.tfvars      # chứa giá trị biến
+*.tfstate             # chứa toàn bộ trạng thái hạ tầng
+.terraform/           # thư mục provider
+*.json                # credentials GCP
+
+7. Bài học thực tế gặp phải
+Vấn đềNguyên nhânGiải phápZone hết tài nguyênf1-micro/e2-micro quá phổ biến ở USĐổi sang SingaporeDấu cách trong PROJECT_IDCopy paste từ consoleKiểm tra .env kỹDuplicate variableCó cả variable.tf và variables.tfXóa file trùngmachine_type sai chỗSửa nhầm blockĐọc kỹ cấu trúc file
+
+8. Khái niệm quan trọng
+Destructive change — một số thay đổi buộc Terraform phải xóa và tạo lại tài nguyên (ví dụ: đổi disk image). Terraform sẽ báo trước bằng ký hiệu -/+.
+Dependency graph — Terraform tự động hiểu thứ tự tạo tài nguyên. VM phụ thuộc vào VPC → VPC được tạo trước, xóa sau.
+State file (terraform.tfstate) — Terraform lưu trạng thái thực tế của hạ tầng vào đây để so sánh với cấu hình mỗi lần chạy.
+
+Bước tiếp theo bạn có thể học
+
+Modules — tái sử dụng cấu hình Terraform
+Remote backend — lưu tfstate trên GCS thay vì máy local
+HCP Terraform — chạy Terraform tự động khi push code lên Git
+Provisioners — cài phần mềm tự động lên VM sau khi tạo

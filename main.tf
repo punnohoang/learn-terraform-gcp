@@ -1,4 +1,10 @@
 terraform {
+  cloud {
+    organization = "terraform-tutorial-punno"
+    workspaces {
+      name = "learn-terraform-gcp"
+    }
+  }
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -33,4 +39,17 @@ resource "google_compute_instance" "vm_instance" {
     access_config {
     }
   }
+}
+
+resource "google_compute_firewall" "web-firewall" {
+  name    = "terraform-firewall"
+  network = google_compute_network.vpc_network.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["web"]
 }
